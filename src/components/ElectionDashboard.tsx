@@ -17,6 +17,7 @@ export function ElectionDashboard() {
   const { data, isLoading, isError } = useGetElectionInfo(electionId);
   const navigate = useNavigate();
   const active = data?.electionInfo.status === 'active';
+  const electionDesc = data?.electionInfo.description;
   return (
     <div className="mx-auto mt-8 max-w-[64rem]">
       <div className="grid grid-cols-4 gap-4">
@@ -24,17 +25,16 @@ export function ElectionDashboard() {
           isLoading={isLoading}
           isError={isError}
           data={
-            <div className="space-y-2">
-              <h4 className="text-xl">{data?.electionInfo.name}</h4>
-              <p className="text-base font-normal">
-                {/* TODO: ADD DESCRIPTION AND COUNT TO ELECTION INFO RESPONSE */}
-                my election description! it's really really really really really
-                really long
-              </p>
+            <div className="w-full space-y-2">
+              <h4 className="text-center text-xl">{data?.electionInfo.name}</h4>
+              {electionDesc && (
+                <p className="text-center text-base font-normal">
+                  {electionDesc}
+                </p>
+              )}
             </div>
           }
           className="col-span-2"
-          // noPadding={true}
         />
         <InfoCard
           isLoading={isLoading}
@@ -141,7 +141,6 @@ function InfoCard({
   isError,
   refetch,
   className,
-  noPadding,
 }: {
   title?: string;
   data?: ReactNode;
@@ -149,18 +148,17 @@ function InfoCard({
   isError: boolean;
   refetch?: () => void;
   className?: string;
-  noPadding?: boolean;
 }) {
   return (
     <Card className={cn('flex flex-col', className)}>
-      <CardHeader className={cn(title ? 'pb-2' : 'pb-0', noPadding && 'p-0')}>
+      <CardHeader className={cn(title ? 'pb-2' : 'pb-0')}>
         {title && (
           <CardTitle className="text-center text-lg font-normal">
             {title}
           </CardTitle>
         )}
       </CardHeader>
-      <CardContent className={cn(noPadding && 'p-0', 'h-full')}>
+      <CardContent className="h-full">
         {isError ? (
           <div className="flex h-8 items-center">
             <div className="flex items-center justify-center gap-2 rounded-md bg-destructive px-3 py-1 font-semibold text-destructive-foreground shadow-sm">

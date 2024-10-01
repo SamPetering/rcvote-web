@@ -123,6 +123,7 @@ export const electionInfoResponseSchema = z.object({
         color: colorSchema,
       })
     ),
+    description: z.string().nullable(),
   }),
 });
 export type ElectionInfo = z.infer<
