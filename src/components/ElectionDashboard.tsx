@@ -33,9 +33,9 @@ export function ElectionDashboard() {
             <div className="w-full space-y-2">
               <h4 className="text-center text-xl">{data?.electionInfo.name}</h4>
               {electionDesc && (
-                <p className="text-center text-base font-normal">
+                <ScrollArea className="text-center text-base font-normal">
                   {electionDesc}
-                </p>
+                </ScrollArea>
               )}
             </div>
           }
