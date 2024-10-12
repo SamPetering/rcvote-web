@@ -10,9 +10,11 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { useNavigate } from '@tanstack/react-router';
 import {
   ArrowRightIcon,
   CommandIcon,
+  HomeIcon,
   LogOutIcon,
   MoonStarIcon,
   OptionIcon,
@@ -23,6 +25,7 @@ export function UserProfileButton() {
   const { login, logout } = useAuth();
   const user = useMaybeUser();
   const { toggleTheme, theme } = useTheme();
+  const navigate = useNavigate();
 
   if (!user)
     return (
@@ -54,11 +57,20 @@ export function UserProfileButton() {
         <span className="select-none">{initials}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent
+        side="bottom"
+        align="end"
         onCloseAutoFocus={(e) => e.preventDefault()}
         className="min-w-[12rem]"
       >
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => navigate({ to: '/home' })}
+          className="cursor-pointer space-x-2"
+        >
+          <HomeIcon className="w-4" />
+          <span>Home</span>
+        </DropdownMenuItem>
         <DropdownMenuItem
           onSelect={(event) => event.preventDefault()}
           onClick={toggleTheme}

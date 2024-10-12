@@ -41,6 +41,7 @@ import {
   ELECTION_NAME_MAX_LENGTH,
 } from '@/lib/schemas';
 import { Fragment } from 'react/jsx-runtime';
+import { useNavigate } from '@tanstack/react-router';
 
 const colorOptions = Object.keys(COLORS).map((key) => {
   return {
@@ -67,6 +68,7 @@ export function CallElectionForm({
   onFormSubmit: (form: CallElectionFormData) => void;
   isSubmitting: boolean;
 }) {
+  const navigate = useNavigate();
   const form = useForm<CallElectionFormData>({
     resolver: zodResolver(callElectionFormSchema),
     defaultValues: {
@@ -341,7 +343,13 @@ export function CallElectionForm({
           </CardContent>
 
           <CardFooter className="flex justify-between">
-            <Button variant="outline">Cancel</Button>
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => navigate({ from: '/call-election', to: '/home' })}
+            >
+              Cancel
+            </Button>
             <Button disabled={isSubmitting} type="submit">
               Submit
             </Button>

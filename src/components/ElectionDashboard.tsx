@@ -53,6 +53,11 @@ export function ElectionDashboard() {
           )}
         />
         <VoteCount electionId={electionId} />
+        {/* TODO: election candidates display */}
+        <CandidatesCard
+          className="col-span-2"
+          candidates={data?.electionInfo.candidates}
+        />
       </div>
       <div>
         {isLoading || (!data && 'loading info...')}
@@ -72,6 +77,25 @@ export function ElectionDashboard() {
         vote
       </Button>
     </div>
+  );
+}
+
+function CandidatesCard({
+  candidates,
+  className,
+}: {
+  candidates?: ElectionInfo['candidates'];
+  className?: string;
+}) {
+  return (
+    <Card className={cn(className)}>
+      <CardHeader>
+        <CardTitle className="text-center text-lg font-normal">
+          Candidates
+        </CardTitle>
+      </CardHeader>
+      <CardContent>{JSON.stringify(candidates) ?? null}</CardContent>
+    </Card>
   );
 }
 
