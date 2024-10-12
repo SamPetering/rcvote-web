@@ -149,11 +149,11 @@ function CandidateCard({
     transform: CSS.Transform.toString(transform),
     transition,
     cursor: 'grab',
-    backgroundColor: COLORS[candidate.color]['500'],
+    backgroundColor: COLORS[candidate.color]['600'],
   };
   return (
     <Card
-      className="relative pl-4"
+      className="relative pl-4 text-white"
       ref={setNodeRef}
       style={style}
       {...attributes}

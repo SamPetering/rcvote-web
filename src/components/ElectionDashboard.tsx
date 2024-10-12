@@ -5,19 +5,24 @@ import {
 } from '@/api/elections';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { COLORS } from '@/lib/colors';
 import { ElectionInfo } from '@/lib/schemas';
 import { cn } from '@/lib/utils';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { CircleAlertIcon, RotateCwIcon } from 'lucide-react';
+import { CircleAlertIcon, PowerIcon, RotateCwIcon } from 'lucide-react';
 import { ReactNode } from 'react';
 
 export function ElectionDashboard() {
   const { electionId } = useParams({ from: '/election/$electionId/dashboard' });
   const { data, isLoading, isError } = useGetElectionInfo(electionId);
   const navigate = useNavigate();
-  const active = data?.electionInfo.status === 'active';
   const electionDesc = data?.electionInfo.description;
+  const { mutate, isPending } = useActivateElection(electionId);
+  const handleActivateClick = () => {
+    mutate();
+  };
+  const status = data?.electionInfo.status;
   return (
     <div className="mx-auto mt-8 max-w-[64rem]">
       <div className="grid grid-cols-4 gap-4">
@@ -40,29 +45,39 @@ export function ElectionDashboard() {
           isLoading={isLoading}
           isError={isError}
           data={
-            active === true ? 'Active' : active === false ? 'Inactive' : 'Ended'
+            <div className="flex w-full flex-col items-center gap-4">
+              <span>{status}</span>
+              {status === 'inactive' && (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="w-full bg-election-status-inactive text-white hover:bg-transparent hover:outline hover:outline-1"
+                  disabled={isPending}
+                  onClick={handleActivateClick}
+                >
+                  activate
+                  <PowerIcon className="ml-2 w-4" />
+                </Button>
+              )}
+            </div>
           }
           title="Status"
           className={cn(
             'text-white',
-            active === true
+            status === 'active'
               ? 'bg-election-status-active'
-              : active === false
+              : status === 'inactive'
                 ? 'bg-election-status-inactive'
-                : 'bg-election-status-ended'
+                : status === 'ended'
+                  ? 'bg-election-status-ended'
+                  : 'bg-transparent'
           )}
         />
         <VoteCount electionId={electionId} />
-        {/* TODO: election candidates display */}
         <CandidatesCard
           className="col-span-2"
           candidates={data?.electionInfo.candidates}
         />
-      </div>
-      <div>
-        {isLoading || (!data && 'loading info...')}
-        {isError && 'error getting info'}
-        {data && <ElectionInfoDisplay info={data.electionInfo} />}
       </div>
       <br />
       <Button
@@ -94,54 +109,32 @@ function CandidatesCard({
           Candidates
         </CardTitle>
       </CardHeader>
-      <CardContent>{JSON.stringify(candidates) ?? null}</CardContent>
-    </Card>
-  );
-}
-
-function ElectionInfoDisplay({ info }: { info: ElectionInfo }) {
-  const { electionId } = useParams({ from: '/election/$electionId/dashboard' });
-  const { mutate, isPending } = useActivateElection(electionId);
-  const handleActivateClick = () => {
-    mutate();
-  };
-  return (
-    <div>
-      <h2>Election Info:</h2>
-      <div>Name: {info.name}</div>
-      <div className="flex items-center gap-2">
-        <div>Status: {info.status}</div>
-        {info.status !== 'active' && (
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={isPending}
-            onClick={handleActivateClick}
-          >
-            activate
-          </Button>
-        )}
-      </div>
-      <div>
-        <h3>Candidates:</h3>
-        <div className="flex flex-col gap-2">
-          {info.candidates.map((c) => {
+      <CardContent>
+        <div className="flex flex-col gap-1">
+          {candidates?.map((c, i) => {
             return (
-              <div key={c.name}>
-                <div className="flex items-center gap-2">
-                  <div
-                    style={{ backgroundColor: COLORS[c.color][500] }}
-                    className="h-4 w-4"
-                  />
-                  <div>{c.name}</div>
+              <div
+                className="flex items-center gap-2 rounded-md p-3 text-white shadow-md"
+                key={c.name + c.color + i}
+                style={{ backgroundColor: COLORS[c.color]['600'] }}
+              >
+                <div className="grow whitespace-nowrap text-sm font-semibold">
+                  {c.name}
                 </div>
-                {c.description && <div className="pl-2">{c.description}</div>}
+                {c.description && (
+                  <ScrollArea
+                    maxHeightClassName="max-h-16"
+                    className="border-l pl-2 text-sm font-medium dark:border-l-slate-200"
+                  >
+                    {c.description}
+                  </ScrollArea>
+                )}
               </div>
             );
           })}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
