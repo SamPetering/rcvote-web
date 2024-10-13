@@ -173,7 +173,9 @@ function StatusAction({
         <DropdownMenuTrigger
           className={cn(
             'w-fit rounded-none rounded-r-md px-2 hover:text-white',
-            status === 'active' ? 'hover:bg-green-700' : 'hover:bg-amber-800'
+            { 'hover:bg-green-700': status === 'active' },
+            { 'hover:bg-blue-700': status === 'ended' },
+            { 'hover:bg-amber-800': status === 'inactive' }
           )}
         >
           <EllipsisVertical className="w-3.5" />
