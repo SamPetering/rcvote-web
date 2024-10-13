@@ -59,15 +59,13 @@ export function BallotForm({
   });
   const candidates = form.watch().candidates;
   const handleOrderChange = (newCandidates: BallotFormData['candidates']) => {
-    console.log(newCandidates);
     form.setValue('candidates', newCandidates);
   };
 
   return (
     <Card className="mx-auto w-full max-w-[48rem] space-y-2">
       <CardHeader>
-        <CardTitle>Ballot</CardTitle>
-        <CardTitle>{ballot.electionInfo.name}</CardTitle>
+        <CardTitle>Ballot | {ballot.electionInfo.name}</CardTitle>
         <CardDescription>{ballot.electionInfo.description}</CardDescription>
       </CardHeader>
       <Form {...form}>
