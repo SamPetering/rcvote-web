@@ -10,6 +10,7 @@ import {
   useParams,
 } from '@tanstack/react-router';
 import { useRef, useState } from 'react';
+import { Helmet } from 'react-helmet';
 
 export const Route = createFileRoute('/election/$electionId/vote')({
   beforeLoad: async ({ context }) => {
@@ -47,44 +48,51 @@ function Vote() {
     console.log(res);
   };
 
-  return hasVoted ? (
-    <div className="mx-auto max-w-[64rem]">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (ref.current) {
-            setVoterId(Number(ref.current?.value));
-          }
-        }}
-      >
-        <div className="flex w-fit flex-col gap-2">
-          <div>{`${voterId} has already voted`}</div>
-          <Button
-            onClick={() => {
-              navigate({
-                from: '/election/$electionId/vote',
-                to: '/election/$electionId/dashboard',
-                params: { electionId },
-              });
+  return (
+    <>
+      <Helmet>
+        <title>{`Vote: ${data.ballot.electionInfo.name}`}</title>
+      </Helmet>
+      <div className="mx-auto max-w-[64rem] pt-8">
+        {hasVoted ? (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (ref.current) {
+                setVoterId(Number(ref.current?.value));
+              }
             }}
           >
-            go to dashboard
-          </Button>
-        </div>
-        <br />
-        <div className="flex max-w-sm gap-2">
-          <Input ref={ref} placeholder="new voter id" />
-          <Button type="submit">update</Button>
-        </div>
-      </form>
-    </div>
-  ) : (
-    <BallotForm
-      voterId={voterId}
-      ballot={data.ballot}
-      onFormSubmit={handleFormSubmit}
-      electionId={electionId}
-      isSubmitting={isPending}
-    />
+            <div className="flex w-fit flex-col gap-2">
+              <div>{`${voterId} has already voted`}</div>
+              <Button
+                onClick={() => {
+                  navigate({
+                    from: '/election/$electionId/vote',
+                    to: '/election/$electionId/dashboard',
+                    params: { electionId },
+                  });
+                }}
+              >
+                go to dashboard
+              </Button>
+            </div>
+            <br />
+            <div className="flex max-w-sm gap-2">
+              <Input ref={ref} placeholder="new voter id" />
+              <Button type="submit">update</Button>
+            </div>
+          </form>
+        ) : (
+          <BallotForm
+            voterId={voterId}
+            ballot={data.ballot}
+            onFormSubmit={handleFormSubmit}
+            electionId={electionId}
+            isSubmitting={isPending}
+          />
+        )}
+      </div>
+    </>
   );
 }
