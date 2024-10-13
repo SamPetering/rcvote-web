@@ -161,11 +161,9 @@ function StatusAction({
     <div
       className={cn(
         'flex h-fit max-h-6 items-center rounded-md text-xs font-extrabold text-white shadow-sm',
-        status === 'active'
-          ? 'bg-green-600'
-          : status === 'inactive'
-            ? 'bg-election-status-inactive'
-            : 'bg-election-status-ended'
+        { 'bg-election-status-active': status === 'active' },
+        { 'bg-election-status-inactive': status === 'inactive' },
+        { 'bg-election-status-ended': status === 'ended' }
       )}
     >
       <div className="border-r-2 border-border px-2 py-1">{status}</div>
@@ -173,7 +171,7 @@ function StatusAction({
         <DropdownMenuTrigger
           className={cn(
             'w-fit rounded-none rounded-r-md px-2 hover:text-white',
-            { 'hover:bg-green-700': status === 'active' },
+            { 'hover:bg-green-800': status === 'active' },
             { 'hover:bg-blue-700': status === 'ended' },
             { 'hover:bg-amber-800': status === 'inactive' }
           )}
