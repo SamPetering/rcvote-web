@@ -19,18 +19,21 @@ export function ElectionDashboardPage() {
         isLoading={isLoading}
         isError={isError}
       />
-      <br />
-      <Button
-        onClick={() => {
-          navigate({
-            from: '/election/$electionId/dashboard',
-            to: '/election/$electionId/vote',
-            params: { electionId },
-          });
-        }}
-      >
-        vote
-      </Button>
+      {data?.electionInfo.status === 'active' && (
+        <div className="mt-4">
+          <Button
+            onClick={() => {
+              navigate({
+                from: '/election/$electionId/dashboard',
+                to: '/election/$electionId/vote',
+                params: { electionId },
+              });
+            }}
+          >
+            vote
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
