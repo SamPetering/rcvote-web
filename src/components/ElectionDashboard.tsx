@@ -1,96 +1,83 @@
-import {
-  useActivateElection,
-  useGetElectionInfo,
-  useGetVoteCount,
-} from '@/api/elections';
+import { useActivateElection, useGetVoteCount } from '@/api/elections';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { COLORS } from '@/lib/colors';
 import { ElectionInfo } from '@/lib/schemas';
 import { cn } from '@/lib/utils';
-import { useNavigate, useParams } from '@tanstack/react-router';
 import { CircleAlertIcon, PowerIcon, RotateCwIcon } from 'lucide-react';
 import { ReactNode } from 'react';
 
-export function ElectionDashboard() {
-  const { electionId } = useParams({ from: '/election/$electionId/dashboard' });
-  const { data, isLoading, isError } = useGetElectionInfo(electionId);
-  const navigate = useNavigate();
-  const electionDesc = data?.electionInfo.description;
+export function ElectionDashboard({
+  electionId,
+  electionInfo,
+  isLoading,
+  isError,
+}: {
+  electionId: string;
+  electionInfo?: ElectionInfo;
+  isLoading: boolean;
+  isError: boolean;
+}) {
   const { mutate, isPending } = useActivateElection(electionId);
   const handleActivateClick = () => {
     mutate();
   };
-  const status = data?.electionInfo.status;
+  const status = electionInfo?.status;
   return (
-    <div className="mx-auto mt-8 max-w-[64rem]">
-      <div className="grid grid-cols-4 gap-4">
-        <InfoCard
-          isLoading={isLoading}
-          isError={isError}
-          data={
-            <div className="w-full space-y-2">
-              <h4 className="text-center text-xl">{data?.electionInfo.name}</h4>
-              {electionDesc && (
-                <ScrollArea className="text-center text-base font-normal">
-                  {electionDesc}
-                </ScrollArea>
-              )}
-            </div>
-          }
-          className="col-span-2"
-        />
-        <InfoCard
-          isLoading={isLoading}
-          isError={isError}
-          data={
-            <div className="flex w-full flex-col items-center gap-4">
-              <span>{status}</span>
-              {status === 'inactive' && (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="w-full bg-election-status-inactive text-white hover:bg-transparent hover:outline hover:outline-1"
-                  disabled={isPending}
-                  onClick={handleActivateClick}
-                >
-                  activate
-                  <PowerIcon className="ml-2 w-4" />
-                </Button>
-              )}
-            </div>
-          }
-          title="Status"
-          className={cn(
-            'text-white',
-            status === 'active'
-              ? 'bg-election-status-active'
-              : status === 'inactive'
-                ? 'bg-election-status-inactive'
-                : status === 'ended'
-                  ? 'bg-election-status-ended'
-                  : 'bg-transparent'
-          )}
-        />
-        <VoteCount electionId={electionId} />
-        <CandidatesCard
-          className="col-span-2"
-          candidates={data?.electionInfo.candidates}
-        />
-      </div>
-      <br />
-      <Button
-        onClick={() => {
-          navigate({
-            from: '/election/$electionId/dashboard',
-            to: '/election/$electionId/vote',
-            params: { electionId },
-          });
-        }}
-      >
-        vote
-      </Button>
+    <div className="grid grid-cols-4 gap-4">
+      <InfoCard
+        isLoading={isLoading}
+        isError={isError}
+        data={
+          <div className="w-full space-y-2">
+            <h4 className="text-center text-xl">{electionInfo?.name}</h4>
+            {electionInfo?.description && (
+              <ScrollArea className="text-center text-base font-normal">
+                {electionInfo?.description}
+              </ScrollArea>
+            )}
+          </div>
+        }
+        className="col-span-2"
+      />
+      <InfoCard
+        isLoading={isLoading}
+        isError={isError}
+        data={
+          <div className="flex w-full flex-col items-center gap-4">
+            <span>{status}</span>
+            {status === 'inactive' && (
+              <Button
+                size="sm"
+                variant="secondary"
+                className="w-full bg-election-status-inactive text-white hover:bg-transparent hover:outline hover:outline-1"
+                disabled={isPending}
+                onClick={handleActivateClick}
+              >
+                activate
+                <PowerIcon className="ml-2 w-4" />
+              </Button>
+            )}
+          </div>
+        }
+        title="Status"
+        className={cn(
+          'text-white',
+          status === 'active'
+            ? 'bg-election-status-active'
+            : status === 'inactive'
+              ? 'bg-election-status-inactive'
+              : status === 'ended'
+                ? 'bg-election-status-ended'
+                : 'bg-transparent'
+        )}
+      />
+      <VoteCount electionId={electionId} />
+      <CandidatesCard
+        className="col-span-2"
+        candidates={electionInfo?.candidates}
+      />
     </div>
   );
 }
@@ -104,8 +91,8 @@ function CandidatesCard({
 }) {
   return (
     <Card className={cn(className)}>
-      <CardHeader>
-        <CardTitle className="text-center text-lg font-normal">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-center text-lg font-semibold">
           Candidates
         </CardTitle>
       </CardHeader>

@@ -1,4 +1,4 @@
-import { ElectionDashboard } from '@/components/ElectionDashboard';
+import { ElectionDashboardPage } from '@/components/ElectionDashboardPage';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/election/$electionId/dashboard')({
@@ -10,5 +10,5 @@ export const Route = createFileRoute('/election/$electionId/dashboard')({
       });
     }
   },
-  component: ElectionDashboard,
+  component: ElectionDashboardPage,
 });
